@@ -36,6 +36,10 @@
   margin-right: auto;
 }
 
+.main-header span {
+  cursor: pointer;
+}
+
 .App-logo {
   height: 50px;
   width: 50px;
