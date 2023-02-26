@@ -7,8 +7,8 @@ import sideImage2 from "../../assets/images/sider_2019_02-04.png"
 import sideImage3 from "../../assets/images/sider_2019_02-04-2.png"
 import styles from './HomePage.module.css';
 
-
 export class HomePage extends React.Component {
+
   render(): React.ReactNode {
     return <div>
       <Header />
@@ -58,3 +58,4 @@ export class HomePage extends React.Component {
     </div>
   }
 }
+
