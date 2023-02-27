@@ -1,4 +1,8 @@
 
+// 引入action types和action type的定義
+import { ADD_LANGUAGE, CHANGE_LANGUAGE, LanguageActionTypes } from "./languageActions"
+
+// 定義state
 export interface LanguageState{
   language: "en" | "zh",
   languageList: {name:string, code:string}[]
@@ -12,9 +16,10 @@ const defaultState: LanguageState = {
   ]
 }
 
-const languageReducer = (state = defaultState, action) => {
+// 定義action
+const languageReducer = (state = defaultState, action:LanguageActionTypes) => {
   switch (action.type) {
-    case "CHANGE_LANGUAGE":
+    case CHANGE_LANGUAGE:
       switch (action.language) {
         case "zh":
           return {
@@ -30,11 +35,10 @@ const languageReducer = (state = defaultState, action) => {
         default:
           return state
       }
-    case "ADD_LANGUAGE":
-      console.log(action)
+    case ADD_LANGUAGE:
       return {
         ...state,
-        languageList: [...state.languageList, {name:action.language,code:action.language}]
+        languageList: [...state.languageList, action.newLanguage]
       }
     default:
       return state

@@ -5,6 +5,7 @@ import { Layout, Typography, Input, Button, Dropdown, Menu } from 'antd';
 import { GlobalOutlined } from '@ant-design/icons';
 import { withRouter, RouteComponentProps } from "../../helpers/withRouter";
 import store from "../../redux/store";
+import { addLanguageActionCreator, changeLanguageActionCreator } from "../../redux/language/languageActions";
 import { MenuProps } from "antd";
 
 // 小寫字母開頭的withXXX是高階組件，大寫字母開頭的WithXXX是TypeScript類型定義
@@ -39,12 +40,13 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
     let items: any[] = []
     this.state.languageList.forEach((l, index) => {
       const labelSpan = <span onClick={this.menuClickHandler}>{l.name}</span>
-      let obj = { key: l.code, label: labelSpan }
+      let obj = { key: index, label: labelSpan }
       items[index] = obj
     })
     const iLength = items.length
     const labNewLan = <span onClick={this.menuClickHandler}>{this.props.t("header.add_new_language")}</span>
-    items[iLength] = { key: 'new_lan', label: labNewLan }
+    console.log(iLength)
+    items[iLength] = { key: 'add_new_lan', label: labNewLan }
     this.setState({ items })
   }
 
@@ -57,27 +59,20 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
   }
 
   menuClickHandler = (e) => {
-    let language: string = ''
     if (e.target.innerText === "添加新语言" || e.target.innerText === "add new language") {
-      const addNewLanguageAction = {
-        type: "ADD_LANGUAGE",
-        language: 'new language'
-      }
-      store.dispatch(addNewLanguageAction)
+      const newLanguage = { name: "new language", code: 'new_lan' }
+      store.dispatch(addLanguageActionCreator(newLanguage))
       return
     }
 
+    let language: 'zh' | 'en' = 'zh'
     if (e.target.innerText === "中文") {
       language = 'zh'
     } else if (e.target.innerText === "English") {
       language = 'en'
     }
     i18n.changeLanguage(language)
-    const changeLanguageAction = {
-      type: "CHANGE_LANGUAGE",
-      language
-    }
-    store.dispatch(changeLanguageAction)
+    store.dispatch(changeLanguageActionCreator(language))
   }
 
   render() {
