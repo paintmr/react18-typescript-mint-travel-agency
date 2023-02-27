@@ -4,30 +4,34 @@ import logo from '../../assets/logo.png';
 import { Layout, Typography, Input, Button, Dropdown, Menu } from 'antd';
 import { GlobalOutlined } from '@ant-design/icons';
 import { withRouter, RouteComponentProps } from "../../helpers/withRouter";
-import store from "../../redux/store";
 import { addLanguageActionCreator, changeLanguageActionCreator } from "../../redux/language/languageActions";
 import { MenuProps } from "antd";
-
 // 小寫字母開頭的withXXX是高階組件，大寫字母開頭的WithXXX是TypeScript類型定義
 import { withTranslation, WithTranslation } from 'react-i18next'
 import i18n from "../../i18n/configs";
 
+import { connect } from "react-redux";
+// RootState用於定義mapStateToProps裡面的state
+import { RootState } from "../../redux/store";
+// Dispatch用於定義mapDispatchToProps裡面的dispatch
+import { Dispatch } from "react";
+
 
 interface State {
-  language: "en" | "zh",
-  languageList: { name: string, code: string }[]
   items: MenuProps['items']
 }
 
 // 兩個props的類型定義合併在一起，用&
-class HeaderComponent extends React.Component<RouteComponentProps & WithTranslation, State> {
+// RouteComponentProps定義路由props類型；
+// WithTranslation定義i18n的props類型，
+// ReturnType < typeof mapStateToProps > 定義mapStateToProps類型
+// ReturnType<typeof mapDispatchToProps>定義mapDispatchToProps類型
+type PropsType = RouteComponentProps & WithTranslation & ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
+class HeaderComponent extends React.Component<PropsType, State> {
 
   constructor(props) {
     super(props);
-    const storeState = store.getState()
     this.state = {
-      language: storeState.language,
-      languageList: storeState.languageList,
       items: []
     }
   }
@@ -38,30 +42,22 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
 
   handleMenuList = () => {
     let items: any[] = []
-    this.state.languageList.forEach((l, index) => {
+    this.props.languageList.forEach((l, index) => {
       const labelSpan = <span onClick={this.menuClickHandler}>{l.name}</span>
       let obj = { key: index, label: labelSpan }
       items[index] = obj
     })
     const iLength = items.length
     const labNewLan = <span onClick={this.menuClickHandler}>{this.props.t("header.add_new_language")}</span>
-    console.log(iLength)
     items[iLength] = { key: 'add_new_lan', label: labNewLan }
     this.setState({ items })
-  }
-
-  componentDidUpdate(): void {
-    store.subscribe(() => {
-      this.setState({ language: store.getState().language, languageList: store.getState().languageList }, () => {
-        this.handleMenuList()
-      })
-    })
   }
 
   menuClickHandler = (e) => {
     if (e.target.innerText === "添加新语言" || e.target.innerText === "add new language") {
       const newLanguage = { name: "new language", code: 'new_lan' }
-      store.dispatch(addLanguageActionCreator(newLanguage))
+      this.props.addLanguage(newLanguage)
+      this.handleMenuList()
       return
     }
 
@@ -72,7 +68,7 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
       language = 'en'
     }
     i18n.changeLanguage(language)
-    store.dispatch(changeLanguageActionCreator(language))
+    this.props.changeLanguage(language)
   }
 
   render() {
@@ -87,7 +83,7 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
             menu={{ items }}
             icon={<GlobalOutlined />}
           >
-            {this.state.language === "zh" ? "中文" : "English"}
+            {this.props.language === "zh" ? "中文" : "English"}
           </Dropdown.Button>
           <Button.Group className={styles['button-group']}>
             <Button onClick={() => { navigate('./register') }}>{t("header.register")}</Button>
@@ -133,5 +129,24 @@ class HeaderComponent extends React.Component<RouteComponentProps & WithTranslat
 
 }
 
-// 注意這裡withRouter包裹組件後，再放入withTranslation的第2個括號裡
-export const Header = withTranslation()(withRouter(HeaderComponent))
+const mapStateToProps = (state: RootState) => {
+  return {
+    language: state.language,
+    languageList: state.languageList
+  }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => {
+  return {
+    changeLanguage: (language: "zh" | "en") => {
+      dispatch(changeLanguageActionCreator(language))
+    },
+    addLanguage: (newLanguage: { name: string, code: string }) => {
+      dispatch(addLanguageActionCreator(newLanguage))
+    }
+  }
+}
+
+
+// 注意這裡withRouter包裹組件後，再放入withTranslation的第2個括號裡，然後再放入connect的第2個括號裡
+export const Header = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(HeaderComponent)))
