@@ -11,9 +11,11 @@ import { useSelector } from "../../redux/hooks";
 // 使用useDispatch獲取dispatch
 import { useDispatch } from "react-redux";
 // 用Dispatch來定義dispatch
-import { Dispatch } from "react";
+// import { Dispatch } from "react";
 // 用LanguageActionTypes來定義Dispatch的泛型
-import { LanguageActionTypes, addLanguageActionCreator, changeLanguageActionCreator } from "../../redux/language/languageActions";
+// import { LanguageActionTypes } from "../../redux/language/languageActions";
+import { addLanguageActionCreator, changeLanguageActionCreator } from "../../redux/language/languageActions";
+
 // 使用i18n的多語言系統
 import { useTranslation } from "react-i18next"
 import i18n from "../../i18n/configs";
@@ -33,12 +35,12 @@ import i18n from "../../i18n/configs";
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const language = useSelector((state) => state.language)
+  const language = useSelector((state) => state.language.language)
   // 可以用強類型給dispatch做好定義，但是這樣做沒什麼好處，反而讓代碼臃腫，破壞JS代碼的靈活性
   // const dispatch = useDispatch<Dispatch<LanguageActionTypes>>();
   // 直接用useDispatch()即可
   const dispatch = useDispatch();
-  const languageList = useSelector((state) => state.languageList)
+  const languageList = useSelector((state) => state.language.languageList)
   const { t } = useTranslation()
   let items: MenuProps['items'] = []
 
