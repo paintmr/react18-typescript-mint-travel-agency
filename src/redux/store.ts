@@ -4,6 +4,7 @@ import recommendProductsReducer from './recommendProducts/recommendProductsReduc
 // 用於配置redux的開發者工具
 import { composeWithDevTools } from '@redux-devtools/extension';
 import thunk from 'redux-thunk';
+// import { actionLog } from './middleware/actionLog';
 
 const rootReducer = combineReducers({
   language: languageReducer,

@@ -64,9 +64,7 @@ export const fetchRecommendProducts = ():ThunkAction<void, RootState, unknown, R
       const { data } = await axios.get("http://123.56.149.216:8080/api/productCollections")
       dispatch(fetchRecommendProductsSuccess(data))
     } catch (error) {
-      if (error instanceof Error) {
-        dispatch(fetchRecommendProductsFailure(error))
-      }
+      dispatch(fetchRecommendProductsFailure(error instanceof Error ? error.message:'error')) 
     }
   }
 

@@ -13,8 +13,9 @@ import i18n from "../../i18n/configs";
 import { connect } from "react-redux";
 // RootState用於定義mapStateToProps裡面的state
 import { RootState } from "../../redux/store";
-// Dispatch用於定義mapDispatchToProps裡面的dispatch
-import { Dispatch } from "react";
+// Dispatch用於定義mapDispatchToProps裡面的dispatch。注意，這裡是從redux中引入Dispatch，而非react中引入Dispatch
+// import { Dispatch } from "react";
+import { Dispatch } from "redux";
 
 
 interface State {
@@ -136,7 +137,7 @@ const mapStateToProps = (state: RootState) => {
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<any>) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     changeLanguage: (language: "zh" | "en") => {
       dispatch(changeLanguageActionCreator(language))

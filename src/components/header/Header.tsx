@@ -11,7 +11,7 @@ import { useSelector } from "../../redux/hooks";
 // 使用useDispatch獲取dispatch
 import { useDispatch } from "react-redux";
 // 用Dispatch來定義dispatch
-// import { Dispatch } from "react";
+// import { Dispatch } from "redux";
 // 用LanguageActionTypes來定義Dispatch的泛型
 // import { LanguageActionTypes } from "../../redux/language/languageActions";
 import { addLanguageActionCreator, changeLanguageActionCreator } from "../../redux/language/languageActions";
