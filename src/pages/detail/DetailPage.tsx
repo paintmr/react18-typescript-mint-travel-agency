@@ -8,7 +8,8 @@ import styles from './DetailPage.module.css'
 import { ProductIntro } from '../../components';
 import { ProductComments } from '../../components';
 import { commentMockData } from "./mockup";
-
+import { useSelector, useAppDispatch } from '../../redux/hooks';
+import { getProductDetail } from '../../redux/productDetail/slice';
 
 const { RangePicker } = DatePicker
 
@@ -26,9 +27,14 @@ type MatchParams = {
 // }
 
 export const DetailPage: React.FC = (props) => {
-  const [loading, setLoading] = useState<boolean>(true)
-  const [product, setProduct] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  // const [loading, setLoading] = useState<boolean>(true)
+  // const [product, setProduct] = useState<any>(null);
+  // const [error, setError] = useState<string | null>(null);
+
+  const loading = useSelector((state) => state.productDetail.loading)
+  const product = useSelector((state) => state.productDetail.product)
+  const error = useSelector((state) => state.productDetail.error)
+
 
   // 用"touristRouteId"给useParams()做好泛型定義
   // const params = useParams<"touristRouteId">()
@@ -37,18 +43,26 @@ export const DetailPage: React.FC = (props) => {
   // const params = useParams<keyof MatchParams>()
   const { touristRouteId } = params;
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const { data } = await axios.get(`http://123.56.149.216:8080/api/touristRoutes/${touristRouteId}`)
+  //       setProduct(data)
+  //       setLoading(false)
+  //     } catch (error) {
+  //       setError(error instanceof Error ? error.message : 'error')
+  //       setLoading(false)
+  //     }
+  //   }
+  //   fetchData()
+  // }, [])
+
+  const dispatch = useAppDispatch()
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(`http://123.56.149.216:8080/api/touristRoutes/${touristRouteId}`)
-        setProduct(data)
-        setLoading(false)
-      } catch (error) {
-        setError(error instanceof Error ? error.message : 'error')
-        setLoading(false)
-      }
+    if (touristRouteId) {
+      dispatch(getProductDetail(touristRouteId))
     }
-    fetchData()
   }, [])
 
 
